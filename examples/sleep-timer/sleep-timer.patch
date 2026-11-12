@@ -1,0 +1,161 @@
+diff --git a/src/ui/qml.qrc b/src/ui/qml.qrc
+index 58b5963..eb69690 100644
+--- a/src/ui/qml.qrc
++++ b/src/ui/qml.qrc
+@@ -12,6 +12,7 @@
+     <file>qml/AppsView.qml</file>
+     <file>qml/AppHost.qml</file>
+     <file>qml/KickApp.qml</file>
++    <file>qml/SleepTimerApp.qml</file>
+     <file>qml/KickPlayer.qml</file>
+     <file alias="images/app-tile.png">images/app-tile.png</file>
+     <file alias="images/app-kick.png">images/app-kick.png</file>
+diff --git a/src/ui/qml/AppHost.qml b/src/ui/qml/AppHost.qml
+index c3cef28..761be25 100644
+--- a/src/ui/qml/AppHost.qml
++++ b/src/ui/qml/AppHost.qml
+@@ -10,7 +10,7 @@ FocusScope {
+     objectName: "appHost"
+     property string appId: ""
+     readonly property bool active: appId !== ""
+-    readonly property var names: ({ "kick": "kick" })
++    readonly property var names: ({ "kick": "kick", "sleeptimer": "sleep timer" })
+     visible: active
+     signal leave()
+ 
+@@ -50,7 +50,8 @@ FocusScope {
+         id: appLoader
+         anchors { left: parent.left; right: parent.right; top: bar.bottom; bottom: parent.bottom; margins: Theme.pad; topMargin: 18 }
+         active: root.active
+-        sourceComponent: root.appId === "kick" ? kickApp : null
++        sourceComponent: root.appId === "kick" ? kickApp : (root.appId === "sleeptimer" ? sleepTimerApp : null)
+     }
++    Component { id: sleepTimerApp; SleepTimerApp { } }
+     Component { id: kickApp; KickApp { onLeave: { root.appId = ""; root.leave() } } }
+ }
+diff --git a/src/ui/qml/AppsView.qml b/src/ui/qml/AppsView.qml
+index 4f9c72a..f132e75 100644
+--- a/src/ui/qml/AppsView.qml
++++ b/src/ui/qml/AppsView.qml
+@@ -13,6 +13,7 @@ Item {
+     // id, the name under the tile, a line for the tooltip, an icon (a url, or "" for the plain glass)
+     // net: the app uses the internet (it says so on its tile, and is left out of builds without networked apps)
+     readonly property var allApps: [
++        { id: "sleeptimer", name: "sleep timer", blurb: "pause the music after a time you choose", icon: "", net: false },
+         { id: "kick", name: "kick", blurb: "browse and watch live streams from kick.com. uses the internet only while it is open, and only after you allow it", icon: "qrc:/images/app-kick.png", net: true }
+     ]
+     readonly property var apps: allApps.filter(function (a) { return !a.net || hop.netAppsBuilt })
+diff --git a/src/ui/qml/SleepTimerApp.qml b/src/ui/qml/SleepTimerApp.qml
+new file mode 100644
+index 0000000..acf2825
+--- /dev/null
++++ b/src/ui/qml/SleepTimerApp.qml
+@@ -0,0 +1,69 @@
++// SPDX-License-Identifier: GPL-3.0-or-later
++import QtQuick
++import QtQuick.Controls
++import QtQuick.Layouts
++
++// Sleep timer: an example app from the Hop-tunes apps toolkit. It pauses the music after a time you choose.
++// It uses no network and only the player (hop.player), the theme (Theme) and the shared PlainButton.
++FocusScope {
++    id: root
++    objectName: "sleepTimerApp"
++
++    property int remaining: 0           // seconds left; 0 means the timer is not running
++    property int chosen: 0              // the minutes picked
++    readonly property var choices: [[15, "15 minutes"], [30, "30 minutes"], [60, "an hour"], [90, "an hour and a half"]]
++
++    function start(minutes) { chosen = minutes; remaining = minutes * 60 }
++    function cancel() { remaining = 0 }
++    function two(n) { return (n < 10 ? "0" : "") + n }
++    function clock(s) { return Math.floor(s / 60) + ":" + two(s % 60) }
++    function goBack() { return false }          // nothing to step back from inside this app: the host closes it
++
++    Timer {
++        id: tick
++        interval: 1000; repeat: true; running: root.remaining > 0
++        onTriggered: {
++            root.remaining -= 1
++            if (root.remaining <= 0) { root.remaining = 0; hop.player.pause() }   // time is up: the music pauses
++        }
++    }
++
++    ColumnLayout {
++        anchors.centerIn: parent
++        width: Math.min(parent.width, 520)
++        spacing: 16
++        Label {
++            Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap
++            text: root.remaining > 0 ? "the music pauses in " + root.clock(root.remaining) : "pause the music after…"
++            color: Theme.strong; font { family: Theme.font; pixelSize: Theme.fs(34); weight: Font.Light }
++            objectName: "sleepTimerState"
++        }
++        Label {
++            Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap
++            visible: hop.player.hasTrack
++            text: "now playing: " + hop.player.title
++            color: Theme.muted; font { family: Theme.font; pixelSize: Theme.fs(16) }
++        }
++        Flow {
++            Layout.fillWidth: true; Layout.alignment: Qt.AlignHCenter; spacing: 12
++            Repeater {
++                model: root.choices
++                delegate: PlainButton {
++                    required property var modelData
++                    objectName: "sleepTimerChoice_" + modelData[0]
++                    text: modelData[1]
++                    primary: root.chosen === modelData[0] && root.remaining > 0
++                    focusPolicy: Qt.NoFocus
++                    onClicked: root.start(modelData[0])
++                }
++            }
++        }
++        PlainButton {
++            objectName: "sleepTimerCancel"
++            Layout.alignment: Qt.AlignHCenter
++            visible: root.remaining > 0
++            text: "cancel the timer"; focusPolicy: Qt.NoFocus
++            onClicked: root.cancel()
++        }
++    }
++}
+diff --git a/tests/test_ui.cpp b/tests/test_ui.cpp
+index 8f755c7..7bed2cb 100644
+--- a/tests/test_ui.cpp
++++ b/tests/test_ui.cpp
+@@ -2323,6 +2323,34 @@ private slots:
+     }
+ #endif
+ 
++    // An example app from the toolkit: the sleep timer pauses the music when its time is up.
++    void sleepTimerAppPausesTheMusic()
++    {
++        auto *w = window();
++        w->setProperty("view", QStringLiteral("collection"));
++        m_app->playSongs(0);
++        QTRY_VERIFY(m_app->player()->isPlaying());
++        m_app->setAppsEnabled(true);
++        QTRY_VERIFY(item("subTab_apps")->isVisible());
++        QVERIFY(click("subTab_apps"));
++        QVERIFY(click("appTile_sleeptimer"));
++        QTRY_VERIFY(item("sleepTimerApp") && item("sleepTimerApp")->isVisible());
++        QVERIFY(click("sleepTimerChoice_15"));
++        QTRY_VERIFY(item("sleepTimerCancel")->isVisible());
++        QCOMPARE(item("sleepTimerApp")->property("remaining").toInt(), 15 * 60);
++        QVERIFY(m_app->player()->isPlaying());                                   // the timer has only started
++        item("sleepTimerApp")->setProperty("remaining", 2);                      // (do not wait 15 minutes in a test)
++        QTRY_VERIFY_WITH_TIMEOUT(!m_app->player()->isPlaying(), 6000);           // time is up: the music paused
++        QCOMPARE(item("sleepTimerApp")->property("remaining").toInt(), 0);
++        QVERIFY(click("sleepTimerChoice_30"));                                   // a new timer, then cancelled: the music is not touched
++        QVERIFY(click("sleepTimerCancel"));
++        QCOMPARE(item("sleepTimerApp")->property("remaining").toInt(), 0);
++        QTest::keyClick(w, Qt::Key_Escape);
++        QTRY_VERIFY(!item("appHost")->property("active").toBool());
++        m_app->setAppsEnabled(false);
++        QVERIFY(click("subTab_music"));
++    }
++
+     // A controller is connected: starting a song from the collection opens Now playing (and only then).
+     void aConnectedControllerOpensNowPlayingWhenASongStarts()
+     {
