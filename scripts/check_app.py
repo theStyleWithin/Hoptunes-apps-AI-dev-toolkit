@@ -3,8 +3,11 @@
 
 Usage:  python3 check_app.py <app-id> --repo <path to the Hop-tunes source>
 
-It reads source files only (it builds nothing and runs nothing) and prints PASS / FAIL lines. It catches forgotten registrations,
-network use that bypasses the gateway, a missing licence header and a missing test. It is a help, not a security boundary.
+It reads source files only (it builds nothing and runs nothing) and prints PASS / FAIL lines. It catches forgotten registrations (registry, host,
+qrc), a missing licence header, an app QML file that obviously reaches for the network, an app whose test never opens its tile or never closes it,
+and audio analysis that is never released. It is a help, not a judge and not a security boundary: a clean result means "registered and has a test",
+NOT "works". The whole `ctest` run is the proof. It cannot see network use outside the app's own QML file (the real guard is the test
+`onlyTheGatewayTouchesTheNetwork`).
 """
 import argparse
 import os
@@ -28,6 +31,7 @@ def main():
     args = ap.parse_args()
     root, app = args.repo, args.app_id
     results = []
+    notes = []
 
     def check(ok, what, hint=""):
         results.append((bool(ok), what, hint))
@@ -64,9 +68,11 @@ def main():
     check(re.search(r"net:\s*(true|false)", body), "registry: the entry says whether it uses the internet (net: true or false)", "net: false")
 
     # 2. the host
-    check(re.search(r'"%s"\s*:' % re.escape(app), host) or ('"%s"' % app) in host,
-          "host: the app id is in AppHost.qml (names map and the sourceComponent chain)", "see docs/ADD-AN-APP.md step 3")
-    comp = re.search(r'Component\s*\{\s*id:\s*(\w+)\s*;\s*(\w+)\s*\{', host and "\n".join(l for l in host.splitlines() if app in l.lower() or "Component" in l))
+    names_map = re.search(r'names:\s*\(\{([^}]*)\}\)', host)
+    check(names_map and re.search(r'"%s"\s*:' % re.escape(app), names_map.group(1)),
+          "host: the app id is in the `names` map of AppHost.qml", 'names: ({ "kick": "kick", "%s": "my app" })' % app)
+    check(re.search(r'appId\s*===\s*"%s"' % re.escape(app), host),
+          "host: the sourceComponent chain of AppHost.qml loads a component for this app", 'root.appId === "%s" ? myApp : ...' % app)
     comp_types = re.findall(r'Component\s*\{\s*id:\s*\w+\s*;\s*(\w+)\s*\{', host)
     qml_name = None
     for t in comp_types:
@@ -99,8 +105,23 @@ def main():
     else:
         check(False, "file: could not find the app's QML file (see the host check above)")
 
-    # 4. a UI test
-    check(("appTile_%s" % app) in ui_test, "test: tests/test_ui.cpp opens the tile appTile_%s" % app, "see examples/sleep-timer/sleep-timer.patch for a model")
+    # 4. a UI test: the function that opens this app's tile must wait for it (QTRY_) and close it with Esc
+    tile = ("appTile_%s" % app)
+    at = ui_test.find(tile)
+    check(at >= 0, "test: tests/test_ui.cpp opens the tile %s" % tile, "see examples/sleep-timer/sleep-timer.patch for a model")
+    if at >= 0:
+        start = ui_test.rfind("\n    void ", 0, at)
+        end = ui_test.find("\n    }\n", at)
+        body = ui_test[start:end if end > 0 else len(ui_test)]
+        check("QTRY_VERIFY" in body, "test: that test waits for the app to appear with QTRY_VERIFY (never a bare QVERIFY after a click)")
+        check("Key_Escape" in body, "test: that test closes the app with Esc", "QTest::keyClick(w, Qt::Key_Escape)")
+        if "shot(" not in body:
+            notes.append('your test has no shot("name") call, so there is no screenshot to show the person (docs/TESTING.md)')
+    # the song analysis is shared: whoever starts it must release it
+    if qml_src and re.search(r'hop\.audio\.want\([^)]*true', qml_src):
+        check(re.search(r'hop\.audio\.want\([^)]*false', qml_src), "audio: the app releases the song analysis it started (hop.audio.want(..., false))", "do it in Component.onDestruction")
+    if qml_src and "Component.onDestruction" not in qml_src:
+        notes.append("the app has no Component.onDestruction: fine unless it starts timers, holds the music paused, or asks for the song analysis")
 
     # 5. a networked app also declares its sites and has gateway tests
     if uses_net:
@@ -111,7 +132,6 @@ def main():
         card = any(("kickPermission" in (read(os.path.join(root, "src/ui/qml", f)) or "")) for f in os.listdir(os.path.join(root, "src/ui/qml")) if f.endswith(".qml"))
         check(card, "network: a permission card exists to copy (KickApp.qml)", "")
 
-    width = max(len(w) for _, w, _ in results)
     failed = 0
     for ok, what, hint in results:
         if ok:
@@ -119,8 +139,11 @@ def main():
         else:
             failed += 1
             print("FAIL  " + what + (("   -> " + hint) if hint else ""))
+    for n in notes:
+        print("NOTE  " + n)
     print()
     print("%d checks, %d failed" % (len(results), failed))
+    print("(a clean result means registered and has a test, not that it works: run the whole ctest)")
     return 1 if failed else 0
 
 

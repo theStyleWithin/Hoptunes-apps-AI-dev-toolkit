@@ -121,11 +121,11 @@ index 0000000..acf2825
 +    }
 +}
 diff --git a/tests/test_ui.cpp b/tests/test_ui.cpp
-index f85a81e..ccbe505 100644
+index f85a81e..96ac4df 100644
 --- a/tests/test_ui.cpp
 +++ b/tests/test_ui.cpp
-@@ -3333,6 +3333,34 @@ private slots:
-         QVERIFY(!item("miniPullTab")->isVisible());
+@@ -2188,6 +2188,35 @@ private slots:
+         m_app->setGameSetting(QStringLiteral("game"), QStringLiteral("albumfall"));
      }
  
 +    // An example app from the toolkit: the sleep timer pauses the music when its time is up.
@@ -140,6 +140,7 @@ index f85a81e..ccbe505 100644
 +        QVERIFY(click("subTab_apps"));
 +        QVERIFY(click("appTile_sleeptimer"));
 +        QTRY_VERIFY(item("sleepTimerApp") && item("sleepTimerApp")->isVisible());
++        shot("sleep-timer-open");                                                // (a picture for the person: see HOPTUNES_UI_SHOTS in docs/TESTING.md)
 +        QVERIFY(click("sleepTimerChoice_15"));
 +        QTRY_VERIFY(item("sleepTimerCancel")->isVisible());
 +        QCOMPARE(item("sleepTimerApp")->property("remaining").toInt(), 15 * 60);
@@ -156,6 +157,6 @@ index f85a81e..ccbe505 100644
 +        QVERIFY(click("subTab_music"));
 +    }
 +
-     // A controller is connected: starting a song from the collection opens Now playing (and only then).
-     void aConnectedControllerOpensNowPlayingWhenASongStarts()
+     // Apps: a tab of its own next to the other collection tabs (desktop), glass tiles, and an app opens inside the window
+     void appsTabHoldsGlassTilesAndAppsOpenInsideTheWindow()
      {

@@ -4,7 +4,7 @@ The smallest complete app: pick 15, 30, 60 or 90 minutes and the music pauses wh
 
 * `SleepTimerApp.qml`: the screen.
 * `sleep-timer.patch`: everything needed against Hop-tunes at commit `1523fd4b5d162f2ce25c8018e4b07d379c29b8ff` (`BASE_COMMIT.txt`): the QML file,
-  the three registration edits (`qml.qrc`, `AppsView.qml`, `AppHost.qml`) and a UI test. It applies cleanly and the whole UI suite passes with it.
+  the three registration edits (`qml.qrc`, `AppsView.qml`, `AppHost.qml`) and a UI test. It applies cleanly and the whole UI suite passes with it (checked on Qt 6.8). The test sits immediately before `appsTabHoldsGlassTilesAndAppsOpenInsideTheWindow` and calls `shot("sleep-timer-open")`; it sets the remaining time to 2 seconds instead of waiting.
 
 Try it:
 

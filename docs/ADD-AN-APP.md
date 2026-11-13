@@ -36,8 +36,11 @@ FocusScope {
 
 ## 4. Test it
 
-Add a UI test to `tests/test_ui.cpp` (next to the other app tests, early in the file: a late-suite crash exists on Qt 6.4, see `LESSONS.md`). It
-enables apps, opens the tile, checks the app is visible, uses it, and closes it with Esc. Use `examples/sleep-timer/sleep-timer.patch` as the model.
+Add a UI test to `tests/test_ui.cpp`, **immediately before** `appsTabHoldsGlassTilesAndAppsOpenInsideTheWindow` (that is where the apps tests
+live; a late-suite crash exists on Qt 6.4, see `docs/TESTING.md`). It enables apps, opens the tile, checks the app is visible, uses it, and closes
+it with Esc. Use `examples/sleep-timer/sleep-timer.patch` as the model. Call `shot("myapp-open")` once the app is showing: that is the picture you
+show the person (`docs/TESTING.md` says how it is written). If the app counts time, let the test set the app's remaining time to 1 or 2 seconds
+instead of waiting minutes (the sleep-timer test does exactly that), because the whole UI suite has a time limit.
 
 ## 5. Check and build
 
@@ -45,7 +48,7 @@ enables apps, opens the tile, checks the app is visible, uses it, and closes it 
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build build
 QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
-python3 path/to/this-toolkit/scripts/check_app.py myapp --repo .
+python3 path/to/this-toolkit/scripts/check_app.py myapp --repo .      # a PASS only means it is registered and has a test: the whole ctest run is what proves it works
 ```
 
 Then run `./build/hop-tunes`, switch on settings > apps settings > show the apps tab, and open your tile.

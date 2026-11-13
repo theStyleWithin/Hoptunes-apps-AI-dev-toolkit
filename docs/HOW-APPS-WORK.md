@@ -53,6 +53,10 @@ The music keeps playing while an app is open, and the mini player stays.
   slots `play()`, `pause()`, `toggle()`, `stop()`, `next()`, `previous()`), the profile (`hop.profile`, `hop.guest`), settings, the song analysis
   (`hop.audio.want("my-app", true)` starts it and `false` releases it; never leave it on after closing), the game controller (`hop.gamepad`), the
   scores (`hop.submitScore(game, score, extra)` and `hop.gameScores(game)`).
+* **Pausing and resuming the music.** `hop.player.play()` does nothing when there is no current track (`hop.player.hasTrack` is false), and
+  `pause()` is harmless on a paused player. An app that pauses the music should remember whether it was `hop.player.playing` first, resume only
+  music it paused itself (never start music the person did not have on), and give the music back in `Component.onDestruction` if it closes
+  while it is holding it paused.
 * Keep to lower-case, plain sentences in the UI, like the rest of Hop-tunes.
 
 ## Style conventions
