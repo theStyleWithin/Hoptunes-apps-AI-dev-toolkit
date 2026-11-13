@@ -26,7 +26,8 @@ the whole idea: you do not have to wait for anyone, and nobody has to approve an
   repository about the app.** Not even to "offer" it, unless the person explicitly asks you to. The author alone decides what goes into
   official Hop-tunes, and the default is that your app stays yours.
 * If the clone you are working in has the official repository as `origin` (so a push would go there), **stop and ask the person to fork it
-  first.** `scripts/check_app.py` warns about this too.
+  first.** `scripts/check_app.py` warns about this too. (A clone of the official repository just to read and learn from is fine, and it is
+  how an agent starts; the app itself is only ever built in the person's fork.)
 * Do not change the official repository's version, changelog, release notes, store listings or website to mention the app.
 * Do not credit the author with your work and do not call your build official (`PERMISSION-AND-CREDIT.md`).
 

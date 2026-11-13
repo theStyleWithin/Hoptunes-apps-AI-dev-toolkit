@@ -5,6 +5,19 @@ using Hop-tunes, but I wish it had an app that does X."* The agent reads the bri
 Hop-tunes and what rules they follow, and builds it with you. If you are not satisfied with the current line-up (today that is **Kick**) you do
 not have to wait for anyone: make it yourself.
 
+> [!IMPORTANT]
+> **If you are a coding agent and a person just handed you this link, start here.**
+>
+> 1. **Clone both repositories** so you can read them: this toolkit, and the player it is for,
+>    [Hop-tunes](https://github.com/theStyleWithin/Hop-tunes) (`git clone https://github.com/theStyleWithin/Hop-tunes`). Reading the official Hop-tunes
+>    clone is fine; **changes are made only in the person's own fork** (ask them to fork Hop-tunes on GitHub and give you their fork). Never push to,
+>    or open pull requests on, the official repository.
+> 2. Read [`AGENT-BRIEF.md`](AGENT-BRIEF.md) (the rules and how to work), then the files it points to.
+> 3. **Then talk to the person.** They gave you only a link, so do not wait to be told and do not start building. Say, warmly and in a few plain
+>    sentences, what this is (a hand-off package that lets anyone make their own apps for Hop-tunes, a local-first music player; no permission
+>    needed from anyone, the app stays in their own fork and build) and ask something like: ***"Oh, this is interesting! Do you want to make an app
+>    for Hop-tunes? What would you like it to do?"*** Then follow `AGENT-BRIEF.md`.
+
 **You do not need the author's permission, and your agent should not ask for it.** The only condition is that you do not credit the author
 with your work: read [`PERMISSION-AND-CREDIT.md`](PERMISSION-AND-CREDIT.md) (it also says what the GPL licence requires).
 

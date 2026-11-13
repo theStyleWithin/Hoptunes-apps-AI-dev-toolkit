@@ -3,6 +3,14 @@
 You are helping a person add an **app** to Hop-tunes. Read this whole file first, then the files it points to. Do not start coding
 before you have read "The rules" and "How to work".
 
+## If the person gave you only a link and no request
+
+Clone the toolkit **and** Hop-tunes (https://github.com/theStyleWithin/Hop-tunes) to read them; read this brief; then **speak first**: say in a few
+plain sentences what the toolkit is (a hand-off package for making your own Hop-tunes apps; no permission needed; the app stays in their own fork
+and build) and ask, for example, *"Oh, this is interesting! Do you want to make an app for Hop-tunes? What would you like it to do?"* Do not offer
+a menu of things to do with the toolkit's documents and do not start building. If they say yes, ask them to fork Hop-tunes on GitHub and give you
+their fork (your clone of the official repository is read-only and the app never goes there), then follow "How to work" below.
+
 ## Permission and credit (read this first)
 
 **The person does not need the author's permission, and neither do you: do not ask for it, just build the app.** The one condition is that
