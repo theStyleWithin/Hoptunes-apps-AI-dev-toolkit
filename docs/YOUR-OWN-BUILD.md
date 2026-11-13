@@ -7,7 +7,7 @@ the whole idea: you do not have to wait for anyone, and nobody has to approve an
 ## What to do
 
 1. **Fork Hop-tunes** on GitHub (the Fork button on `theStyleWithin/Hop-tunes`) and clone *your fork*, not the official repository.
-2. Give your agent **the link to this toolkit**. You do not fork or edit the toolkit: it always stays untouched, and the agent only reads it.
+2. **Fork this toolkit too** and give your agent your fork (or its link). The toolkit needs no more development: the agent only reads it and never changes it.
 3. Give your agent your fork and the toolkit and say what app you want (`PROMPTS.md`). It works on a branch in **your fork**.
 4. **Build your own version**, which is how the app reaches you:
    * **From source** on your computer: `docs/TESTING.md` has the commands; then run `./build/hop-tunes`.
@@ -28,8 +28,8 @@ the whole idea: you do not have to wait for anyone, and nobody has to approve an
 * If the clone you are working in has the official repository as `origin` (so a push would go there), **stop and ask the person to fork it
   first.** `scripts/check_app.py` warns about this too. (A clone of the official repository just to read and learn from is fine, and it is
   how an agent starts; the app itself is only ever built in the person's fork.)
-* Do not modify this toolkit or push to it either: it is read-only reference, and so is the official Hop-tunes repository. The only repository an agent
-  changes is the person's own fork of Hop-tunes.
+* Do not develop on this toolkit or on the official Hop-tunes repository: they are for the agent to review and read. The only code an agent changes is
+  the person's own fork of Hop-tunes (and it never pushes to the official toolkit repository either).
 * Do not change the official repository's version, changelog, release notes, store listings or website to mention the app.
 * Do not credit the author with your work and do not call your build official (`PERMISSION-AND-CREDIT.md`).
 
