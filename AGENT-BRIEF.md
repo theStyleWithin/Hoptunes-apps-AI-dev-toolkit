@@ -17,7 +17,7 @@ their fork (your clone of the official repository is read-only and the app never
 you **never credit the author of Hop-tunes with the work** (no name, no "official", no endorsement; see `PERMISSION-AND-CREDIT.md`, which also
 says what the GPL licence requires). You still ask the *person* what they want; you never ask or wait for the author.
 
-**The app stays in the person's own fork and their own build. It is never added to the official repository.** Work only in a clone of the
+**The toolkit and the official Hop-tunes repository are read-only reference: never change them. The app stays in the person's own fork and their own build and is never added to the official repository.** Work only in a clone of the
 person's **fork** of Hop-tunes (if `origin` is the official `theStyleWithin/Hop-tunes`, stop and ask them to fork first). Never push to it, open a
 pull request or issue on it, tag or release from it. How the person gets a runnable build (from source, an AppImage or a Windows exe built
 by their fork's Actions) is in `docs/YOUR-OWN-BUILD.md`.
