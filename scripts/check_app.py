@@ -9,6 +9,7 @@ network use that bypasses the gateway, a missing licence header and a missing te
 import argparse
 import os
 import re
+import subprocess
 import sys
 
 
@@ -42,6 +43,16 @@ def main():
     if apps_view is None or host is None or qrc is None or ui_test is None:
         print("FAIL this does not look like the Hop-tunes source (src/ui/qml/AppsView.qml, AppHost.qml, qml.qrc or tests/test_ui.cpp missing): check --repo")
         return 1
+
+    # 0. the app belongs in the person's own fork, never in the official repository (docs/YOUR-OWN-BUILD.md)
+    try:
+        origin = subprocess.run(["git", "-C", root, "remote", "get-url", "origin"], capture_output=True, text=True, timeout=10).stdout.strip()
+    except Exception:
+        origin = ""
+    if re.search(r"github\.com[:/]+thestylewithin/hop-tunes(\.git)?/?$", origin, re.I):
+        print("WARN  origin of this clone is the OFFICIAL Hop-tunes repository (%s). Do not push, open pull requests or tag there:" % origin)
+        print("      fork Hop-tunes on GitHub, work in your fork, and keep the app there (docs/YOUR-OWN-BUILD.md).")
+        print()
 
     # 1. the registry entry
     entry = re.search(r'\{\s*id:\s*"%s"\s*,([^}]*)\}' % re.escape(app), apps_view)

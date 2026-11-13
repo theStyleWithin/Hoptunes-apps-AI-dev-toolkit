@@ -1,5 +1,7 @@
 # Drop-in apps: planned, not built
 
+> Note: even when drop-in apps exist, an app someone makes stays theirs: it is installed into their own copy of Hop-tunes, never into the official repository or other people's Hop-tunes (`YOUR-OWN-BUILD.md`).
+
 **Status: not built. Do not tell anyone this works.** Today an app is added to the Hop-tunes source and Hop-tunes is rebuilt
 (`ADD-AN-APP.md`). The idea below would let a person drop an app folder into their profile and have it appear as a tile with no rebuild, so that
 people (and their coding agents) can make apps without compiling Hop-tunes. It is written down so that what gets built later matches what the

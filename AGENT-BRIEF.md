@@ -3,6 +3,17 @@
 You are helping a person add an **app** to Hop-tunes. Read this whole file first, then the files it points to. Do not start coding
 before you have read "The rules" and "How to work".
 
+## Permission and credit (read this first)
+
+**The person does not need the author's permission, and neither do you: do not ask for it, just build the app.** The one condition is that
+you **never credit the author of Hop-tunes with the work** (no name, no "official", no endorsement; see `PERMISSION-AND-CREDIT.md`, which also
+says what the GPL licence requires). You still ask the *person* what they want; you never ask or wait for the author.
+
+**The app stays in the person's own fork and their own build. It is never added to the official repository.** Work only in a clone of the
+person's **fork** of Hop-tunes (if `origin` is the official `theStyleWithin/Hop-tunes`, stop and ask them to fork first). Never push to it, open a
+pull request or issue on it, tag or release from it. How the person gets a runnable build (from source, an AppImage or a Windows exe built
+by their fork's Actions) is in `docs/YOUR-OWN-BUILD.md`.
+
 ## What Hop-tunes is
 
 Hop-tunes is a local-first music player for Linux and Windows (and a phone app) inspired by the Zune software: C++20, Qt 6 (QML), CMake +
@@ -16,8 +27,10 @@ switches it on in settings). Each app is a glass tile. **Today apps are built in
 lines to the Hop-tunes source and building Hop-tunes. Drop-in apps that need no rebuild are *planned, not built*: see
 `docs/DROP-IN-APPS-PLAN.md`. Never tell the person an app can be installed without rebuilding; it cannot yet.
 
-Two real examples live in the Hop-tunes repo: **Kick** (a networked app: browse and watch live streams) and, in this toolkit,
-`examples/sleep-timer/` (a tiny app with no network, verified to build and pass the tests).
+One real app lives in Hop-tunes today: **Kick** (a networked app: browse and watch live streams, download and record them, playlists,
+an optional official sign-in). In this toolkit, `examples/sleep-timer/` is a tiny app with no network, verified to build and pass the tests.
+Apps can be much more than Kick: timers, lyrics and stats screens, visualizers, radio or podcast helpers, small games, anything that fits a
+screen inside a local-first player. Apps that use the internet must follow `docs/NETWORK-AND-PRIVACY.md`.
 
 ## The rules
 
@@ -35,19 +48,21 @@ Two real examples live in the Hop-tunes repo: **Kick** (a networked app: browse 
    network traffic. Run the whole suite before you say you are done.
 6. **Small and reversible.** Change only what the app needs. Do not refactor unrelated code. Keep the licence header
    (`// SPDX-License-Identifier: GPL-3.0-or-later`) on every new source file.
-7. **Ask when unsure.** If the person's idea needs the internet, an account, files outside their profile, or anything that touches the
-   promises above, stop and ask them before building it.
+7. **Ask the person when unsure.** If the idea needs the internet, an account, files outside their profile, or anything that touches the
+   promises above, stop and ask *them* before building it. (Never ask the author of Hop-tunes: no permission is needed.)
+8. **No credit for the author.** Do not name or credit the author of Hop-tunes as the author of the app, and do not imply they approve it
+   (`PERMISSION-AND-CREDIT.md`). New files carry the GPL SPDX line and the person's own name, or none.
 
 ## How to work
 
 1. Ask the person, in plain words: what should the app do, what should it look like, does it need the internet (which sites), and what should
    it remember (nothing, or a list in their profile)?
 2. Read `docs/HOW-APPS-WORK.md` and `docs/ADD-AN-APP.md`, then look at `examples/sleep-timer/` (the smallest complete app).
-3. Make a branch. Add the app following `docs/ADD-AN-APP.md`.
+3. Make a branch **in the person's fork** (`docs/YOUR-OWN-BUILD.md`). Add the app following `docs/ADD-AN-APP.md`.
 4. Build and test (`docs/TESTING.md`). Run `python3 scripts/check_app.py <app-id> --repo <path to Hop-tunes>` and fix every FAIL.
 5. Take a screenshot with the test harness (`HOPTUNES_UI_SHOTS`, see `docs/TESTING.md`) and show the person what it looks like.
 6. Read `docs/LESSONS.md` if anything behaves strangely: it lists mistakes that were already made once.
-7. Tell the person plainly what works, what you could not test, and how to run the app.
+7. Show the person how to get their own runnable build (`docs/YOUR-OWN-BUILD.md`), and tell them plainly what works and what you could not test.
 
 ## Definition of done
 

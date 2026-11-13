@@ -1,5 +1,5 @@
 diff --git a/src/ui/qml.qrc b/src/ui/qml.qrc
-index 58b5963..eb69690 100644
+index 027e44b..8185cab 100644
 --- a/src/ui/qml.qrc
 +++ b/src/ui/qml.qrc
 @@ -12,6 +12,7 @@
@@ -8,24 +8,24 @@ index 58b5963..eb69690 100644
      <file>qml/KickApp.qml</file>
 +    <file>qml/SleepTimerApp.qml</file>
      <file>qml/KickPlayer.qml</file>
+     <file>qml/SeekMeter.qml</file>
      <file alias="images/app-tile.png">images/app-tile.png</file>
-     <file alias="images/app-kick.png">images/app-kick.png</file>
 diff --git a/src/ui/qml/AppHost.qml b/src/ui/qml/AppHost.qml
-index c3cef28..761be25 100644
+index 22f3ca7..dc9f5ba 100644
 --- a/src/ui/qml/AppHost.qml
 +++ b/src/ui/qml/AppHost.qml
-@@ -10,7 +10,7 @@ FocusScope {
-     objectName: "appHost"
+@@ -11,7 +11,7 @@ FocusScope {
      property string appId: ""
      readonly property bool active: appId !== ""
+     readonly property bool theatre: active && !!appLoader.item && appLoader.item.theatre === true     // the app wants the whole window (a phone turned sideways, watching)
 -    readonly property var names: ({ "kick": "kick" })
 +    readonly property var names: ({ "kick": "kick", "sleeptimer": "sleep timer" })
      visible: active
      signal leave()
  
-@@ -50,7 +50,8 @@ FocusScope {
+@@ -71,7 +71,8 @@ FocusScope {
          id: appLoader
-         anchors { left: parent.left; right: parent.right; top: bar.bottom; bottom: parent.bottom; margins: Theme.pad; topMargin: 18 }
+         anchors { left: parent.left; right: parent.right; top: root.theatre ? parent.top : bar.bottom; bottom: parent.bottom; margins: root.theatre ? 0 : Theme.pad; topMargin: root.theatre ? 0 : 18 }
          active: root.active
 -        sourceComponent: root.appId === "kick" ? kickApp : null
 +        sourceComponent: root.appId === "kick" ? kickApp : (root.appId === "sleeptimer" ? sleepTimerApp : null)
@@ -34,7 +34,7 @@ index c3cef28..761be25 100644
      Component { id: kickApp; KickApp { onLeave: { root.appId = ""; root.leave() } } }
  }
 diff --git a/src/ui/qml/AppsView.qml b/src/ui/qml/AppsView.qml
-index 4f9c72a..f132e75 100644
+index 8955af3..bd8a8bf 100644
 --- a/src/ui/qml/AppsView.qml
 +++ b/src/ui/qml/AppsView.qml
 @@ -13,6 +13,7 @@ Item {
@@ -121,12 +121,12 @@ index 0000000..acf2825
 +    }
 +}
 diff --git a/tests/test_ui.cpp b/tests/test_ui.cpp
-index 8f755c7..7bed2cb 100644
+index f85a81e..ccbe505 100644
 --- a/tests/test_ui.cpp
 +++ b/tests/test_ui.cpp
-@@ -2323,6 +2323,34 @@ private slots:
+@@ -3333,6 +3333,34 @@ private slots:
+         QVERIFY(!item("miniPullTab")->isVisible());
      }
- #endif
  
 +    // An example app from the toolkit: the sleep timer pauses the music when its time is up.
 +    void sleepTimerAppPausesTheMusic()

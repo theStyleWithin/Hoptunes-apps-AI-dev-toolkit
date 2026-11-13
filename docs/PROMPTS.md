@@ -1,10 +1,15 @@
 # What to say to your coding agent
 
-First give the agent this toolkit (the folder, or the link to this repository) and the Hop-tunes source (a clone of
-https://github.com/theStyleWithin/Hop-tunes). Then say something like:
+First fork Hop-tunes on GitHub and give the agent this toolkit (the folder, or the link to this repository) and **your fork** of the Hop-tunes
+source. The app stays in your fork and your own build: `docs/YOUR-OWN-BUILD.md`. Then say something like:
 
 > Read AGENT-BRIEF.md in the toolkit, then help me add an app to Hop-tunes. I want an app that <what it does>. It <does / does not> need
 > the internet. Show me what it will look like before you finish, and run the tests.
+
+Or, in your own words:
+
+> I love using Hop-tunes, but it only has one app and I want <something else>. Use the toolkit. I do not need anyone's permission to make an
+> app, so do not ask for it, and do not credit the Hop-tunes author with my work.
 
 Good things to tell it:
 

@@ -15,12 +15,22 @@ An app that does not need the internet should skip this file and never touch the
 4. **It asks first.** A permission card lists the exact sites and what is sent, and offers "not now". The permission is per profile
    (guests: this session only) and can be taken back in settings > apps settings. Without it the gateway refuses every request.
 5. **Only while open.** The app opens the gateway when it opens and closes it when it closes (closing drops everything still on the way and
-   no late answer is ever delivered). There is a visible bar naming what is connected, with a disconnect button.
-6. **User-driven.** Nothing polls in the background. Lists load when the app opens or a button is pressed; "show more" is a button.
+   no late answer is ever delivered). There is a visible bar naming what is connected (Kick's also shows a green / yellow / red health light).
+   It has **no disconnect button on purpose**: a stray tap must not cut the connection. The permission is taken back in settings.
+6. **User-driven.** Nothing polls in the background without being said. Lists load when the app opens or a button is pressed; "show more"
+   is a button. The one declared exception is Kick's health light (two tiny requests about once a minute while the app is open), which the
+   permission card names. A new app that polls must name that on its permission card too.
 7. **Nothing plays by itself.** A video or stream starts only after the person picked it.
 8. **Local lists stay local.** Anything the person keeps (a follow list, a block list, a setting) is saved in their profile settings and
    never uploaded. An app never follows, subscribes, likes or posts on the person's behalf on the outside service.
-9. **Sign-in is optional**, never needed for the app's core use, and never stored anywhere but the profile.
+9. **Sign-in is optional**, never needed for the app's core use, and never stored anywhere but the profile. Use the service's **official**
+   sign-in (OAuth with PKCE), never an unofficial "TV code" or session-token trick: Kick's first sign-in did that, scanners flagged its link,
+   and it was removed. Never ship a client secret in the source or in a release: let each person register their own app on the service and
+   enter its ID and secret (Kick: `docs/kick-sign-in.md` in the Hop-tunes repo, `src/apps/KickAuth.{h,cpp}`).
+   **The gateway can only GET.** `NetLimits` carries no method, body or headers. The only requests that may carry a body or a token are the
+   three exact sign-in requests in `AppNet::authUrlAllowed` (token POST, revoke POST, user GET with a bearer token), on the hosts in
+   `AppNet::authHostsFor`; redirects are never followed for them and a test (`onlyThreeSignInRequestsMayCarryABodyOrAToken`) pins them.
+   A new app with a sign-in must add its own exact requests there, with tests, and nothing broader.
 10. **Say what is not guaranteed.** If the app uses an unofficial interface that can change, say so in its docs and show failures as plain
     sentences, never as a silent blank.
 
@@ -31,6 +41,9 @@ An app that does not need the internet should skip this file and never touch the
   fixtures) and failures end as a plain sentence in an `error` property. See `src/apps/KickClient.{h,cpp}`.
 * **Pictures** come through an image provider that fetches via the gateway (`src/apps/KickImages.h`, QML uses `image://kick/<escaped url>` with
   `cache: false`). Never `Image { source: "https://..." }`.
+* **Big files** (downloads, recordings) still go through the gateway, one slice at a time with HTTP Range requests and a per-request size
+  and time limit (`NetLimits::rangeStart/rangeLength/maxBody`); fetching a whole video in one request was a real mistake (a clip came to
+  973 MB). See `src/apps/OfflineDownloads.cpp` and `src/apps/Hls.cpp`; they respect the person's storage limit (`OfflineStore`).
 * **Video** is fetched by the video engine, not the gateway: give it a stream address only through `openStream` (libmpv: `MpvCore::openStream`,
   GStreamer: `GstVideoPlayer::openStream`); it accepts only https addresses of the app's declared video host (`AppNet::streamSuffixesFor`) and
   sets a generic user agent, no referrer, no cookies and a protocol whitelist. Honest limit: inside the engine the host cannot be enforced further.
@@ -42,7 +55,7 @@ An app that does not need the internet should skip this file and never touch the
 
 ### Places that still assume Kick (change them when you add a second networked app)
 
-`App::setAppNetAllowed` accepts only `"kick"`; `AppNet::hostsFor` and `streamSuffixesFor` know only `"kick"`; `MpvCore::openStream` and
+`App::setAppNetAllowed` accepts only `"kick"`; `AppNet::hostsFor`, `streamSuffixesFor`, `authHostsFor` and `authUrlAllowed` know only `"kick"`; `MpvCore::openStream` and
 `GstVideoPlayer::openStream` validate against `"kick"`; `installImageProviders` registers only `image://kick`. Generalise these deliberately
 (a small table keyed by app id) rather than copy-pasting.
 
@@ -51,6 +64,7 @@ An app that does not need the internet should skip this file and never touch the
 * gateway rules: copy the cases in `tests/test_net.cpp` (`addressRules`, `nothingGoesOutUnlessAllowedAndOpen`, `redirectsStayOnTheList`,
   `closingDropsLateAnswers`) for the new app id;
 * data class: fixtures through a fake transport (`FakeTransport` in `tests/test_net.cpp`), including empty, malformed and error replies;
-* UI: the permission card appears first and nothing was sent before "allow"; "not now" sends nothing; disconnect cuts everything;
-  nothing plays before a pick (`FakeKick` in `tests/test_ui.cpp`).
+* UI: the permission card appears first and nothing was sent before "allow"; "not now" sends nothing; taking the permission back cuts everything;
+  nothing plays before a pick (`FakeKick` in `tests/test_ui.cpp`); if the app has a sign-in: the gateway matrix, the flow against a fake
+  transport (a plain socket plays the browser), refresh and failure paths, and that signing out forgets the tokens.
 No test may touch the real network.
