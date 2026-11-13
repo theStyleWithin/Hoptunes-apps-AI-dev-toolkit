@@ -10,7 +10,7 @@ not have to wait for anyone: make it yourself.
 >
 > 1. **Clone both repositories** so you can read them: this toolkit, and the player it is for,
 >    [Hop-tunes](https://github.com/theStyleWithin/Hop-tunes) (`git clone https://github.com/theStyleWithin/Hop-tunes`). Reading the official Hop-tunes
->    clone is fine (this toolkit and the official Hop-tunes repository are **read-only reference**: you never change them); **changes are made only in the person's own fork** (ask them to fork Hop-tunes on GitHub and give you their fork). Never push to,
+>    clone is fine (this toolkit and the official Hop-tunes repository are **for review only**: you read them and never develop on them); **code is changed only in the person's own fork of Hop-tunes** (ask them to fork **both** Hop-tunes and this toolkit on GitHub, and give you their forks). Never push to,
 >    or open pull requests on, the official repository.
 > 2. Read [`AGENT-BRIEF.md`](AGENT-BRIEF.md) (the rules and how to work), then the files it points to.
 > 3. **Then talk to the person.** They gave you only a link, so do not wait to be told and do not start building. Say, warmly and in a few plain
@@ -26,10 +26,10 @@ repository, which you also give to your agent (an app is added to its source).
 
 ## How to use it
 
-1. **Fork** Hop-tunes on GitHub and clone **your fork** (`git clone https://github.com/<you>/Hop-tunes`). You do not fork this toolkit: it always
-   stays untouched, and your agent only reads it. Your app lives in your own fork and your own build; it is never added to the official repository
+1. **Fork both repositories** on GitHub: **Hop-tunes** (clone **your fork**: `git clone https://github.com/<you>/Hop-tunes`) and **this toolkit**. The toolkit
+   needs no more development: your agent only reads it and never changes it. Your app lives in your own fork of Hop-tunes and your own build; it is never added to the official repository
    ([`docs/YOUR-OWN-BUILD.md`](docs/YOUR-OWN-BUILD.md): from source, as an AppImage or a Windows exe built by your fork's Actions).
-2. Give your coding agent (Claude or any other) **the link to this toolkit** and your fork of the Hop-tunes source.
+2. Give your coding agent (Claude or any other) **your fork of this toolkit** (or its link) and **your fork of the Hop-tunes source**.
 3. Tell it what you want, for example:
    *"Read AGENT-BRIEF.md in the toolkit, then help me add an app to Hop-tunes: a sleep timer that pauses the music. Show me a screenshot and run the tests."*
    More wording ideas are in [`docs/PROMPTS.md`](docs/PROMPTS.md).

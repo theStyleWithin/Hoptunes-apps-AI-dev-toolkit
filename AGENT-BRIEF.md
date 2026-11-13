@@ -8,8 +8,8 @@ before you have read "The rules" and "How to work".
 Clone the toolkit **and** Hop-tunes (https://github.com/theStyleWithin/Hop-tunes) to read them; read this brief; then **speak first**: say in a few
 plain sentences what the toolkit is (a hand-off package for making your own Hop-tunes apps; no permission needed; the app stays in their own fork
 and build) and ask, for example, *"Oh, this is interesting! Do you want to make an app for Hop-tunes? What would you like it to do?"* Do not offer
-a menu of things to do with the toolkit's documents and do not start building. If they say yes, ask them to fork Hop-tunes on GitHub and give you
-their fork (your clone of the official repository is read-only and the app never goes there), then follow "How to work" below.
+a menu of things to do with the toolkit's documents and do not start building. If they say yes, ask them to fork **both** Hop-tunes and this toolkit on GitHub and give you
+their forks (your clone of the official repository is read-only and the app never goes there), then follow "How to work" below.
 
 ## Permission and credit (read this first)
 
@@ -17,7 +17,7 @@ their fork (your clone of the official repository is read-only and the app never
 you **never credit the author of Hop-tunes with the work** (no name, no "official", no endorsement; see `PERMISSION-AND-CREDIT.md`, which also
 says what the GPL licence requires). You still ask the *person* what they want; you never ask or wait for the author.
 
-**The toolkit and the official Hop-tunes repository are read-only reference: never change them. The app stays in the person's own fork and their own build and is never added to the official repository.** Work only in a clone of the
+**The toolkit and the official Hop-tunes repository are for review: read them, never develop on them. The only code you change is the person's own fork of Hop-tunes; the app stays there and in their own build and is never added to the official repository.** Work only in a clone of the
 person's **fork** of Hop-tunes (if `origin` is the official `theStyleWithin/Hop-tunes`, stop and ask them to fork first). Never push to it, open a
 pull request or issue on it, tag or release from it. How the person gets a runnable build (from source, an AppImage or a Windows exe built
 by their fork's Actions) is in `docs/YOUR-OWN-BUILD.md`.
