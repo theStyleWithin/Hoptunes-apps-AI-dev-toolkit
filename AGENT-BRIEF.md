@@ -55,11 +55,13 @@ screen inside a local-first player. Apps that use the internet must follow `docs
 
 ## How to work
 
-1. Ask the person, in plain words: what should the app do, what should it look like, does it need the internet (which sites), and what should
-   it remember (nothing, or a list in their profile)?
+1. Ask the person, in plain words, only what their request has not already answered: what should the app do, what should it look like, does it
+   need the internet (which sites), and what should it remember (nothing, or a list in their profile)? Skip every question the request already
+   answers.
 2. Read `docs/HOW-APPS-WORK.md` and `docs/ADD-AN-APP.md`, then look at `examples/sleep-timer/` (the smallest complete app).
 3. Make a branch **in the person's fork** (`docs/YOUR-OWN-BUILD.md`). Add the app following `docs/ADD-AN-APP.md`.
-4. Build and test (`docs/TESTING.md`). Run `python3 scripts/check_app.py <app-id> --repo <path to Hop-tunes>` and fix every FAIL.
+4. Build and test (`docs/TESTING.md`). Run `python3 <toolkit folder>/scripts/check_app.py <app-id> --repo <your fork of Hop-tunes>` and fix every FAIL. It is a help, not a judge: it checks that the
+   app is registered and has a test, nothing more, so a clean result does not mean the app works. The whole `ctest` run is the proof.
 5. Take a screenshot with the test harness (`HOPTUNES_UI_SHOTS`, see `docs/TESTING.md`) and show the person what it looks like.
 6. Read `docs/LESSONS.md` if anything behaves strangely: it lists mistakes that were already made once.
 7. Show the person how to get their own runnable build (`docs/YOUR-OWN-BUILD.md`), and tell them plainly what works and what you could not test.
