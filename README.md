@@ -2,7 +2,7 @@
 
 A hand-off package for making your own **Hop-tunes** apps. Take this toolkit to Claude or whatever coding agent you use and say: *"I love
 using Hop-tunes, but I wish it had an app that does X."* The agent reads the brief and the manual here, which explain how apps work in
-Hop-tunes and what rules they follow, and builds it with you. If you are not satisfied with the current line-up (today that is **Kick**) you do
+Hop-tunes and what rules they follow, and builds it with you. If you are not satisfied with the current line-up (today: **Kick**, the **Internet Archive**, **DeviantArt** and a little game, **neko cafe**) you do
 not have to wait for anyone: make it yourself.
 
 > [!IMPORTANT]
@@ -27,7 +27,7 @@ repository, which you also give to your agent (an app is added to its source).
 ## How to use it
 
 1. **Fork both repositories** on GitHub: **Hop-tunes** (clone **your fork**: `git clone https://github.com/<you>/Hop-tunes`) and **this toolkit**. The toolkit
-   needs no more development: your agent only reads it and never changes it. Your app lives in your own fork of Hop-tunes and your own build; it is never added to the official repository
+   is kept in step with Hop-tunes by its author: your agent only reads it and never changes it. Your app lives in your own fork of Hop-tunes and your own build; it is never added to the official repository
    ([`docs/YOUR-OWN-BUILD.md`](docs/YOUR-OWN-BUILD.md): from source, as an AppImage or a Windows exe built by your fork's Actions).
 2. Give your coding agent (Claude or any other) **your fork of this toolkit** (or its link) and **your fork of the Hop-tunes source**.
 3. Tell it what you want, for example:
@@ -40,15 +40,15 @@ repository, which you also give to your agent (an app is added to its source).
 |---|---|
 | [`PERMISSION-AND-CREDIT.md`](PERMISSION-AND-CREDIT.md) | **no permission needed; do not credit the author;** what the GPL licence still requires |
 | [`AGENT-BRIEF.md`](AGENT-BRIEF.md) | **start here.** What an app is, the rules (offline first, no telemetry, tests), how the agent should work with you. `AGENTS.md` and `CLAUDE.md` point to it. |
-| [`docs/HOW-APPS-WORK.md`](docs/HOW-APPS-WORK.md) | the apps tab, the registry, the host, what an app's QML may use |
+| [`docs/HOW-APPS-WORK.md`](docs/HOW-APPS-WORK.md) | the apps tab (a grid of glass tiles the person arranges and files in folders), the registry, the host, phones, what an app's QML may use |
 | [`docs/YOUR-OWN-BUILD.md`](docs/YOUR-OWN-BUILD.md) | **your app stays in your own fork and build**; how to build it (source, AppImage, Windows) and stay up to date |
 | [`docs/ADD-AN-APP.md`](docs/ADD-AN-APP.md) | adding an app, step by step |
-| [`docs/NETWORK-AND-PRIVACY.md`](docs/NETWORK-AND-PRIVACY.md) | the privacy promises and the gateway every online app must use (read before any app that needs the internet) |
+| [`docs/NETWORK-AND-PRIVACY.md`](docs/NETWORK-AND-PRIVACY.md) | the privacy promises, the gateway every online app must use, and the places to wire a new online app (read before any app that needs the internet) |
 | [`docs/TESTING.md`](docs/TESTING.md) | building, running the tests, taking screenshots |
 | [`docs/LESSONS.md`](docs/LESSONS.md) | mistakes that were already made once, so they are not made again |
 | [`docs/PROMPTS.md`](docs/PROMPTS.md) | what to say to your agent |
 | [`docs/DROP-IN-APPS-PLAN.md`](docs/DROP-IN-APPS-PLAN.md) | the planned way to add apps without rebuilding Hop-tunes (not built yet) |
-| [`examples/sleep-timer/`](examples/sleep-timer/) | a complete, tested example app (a patch you can apply and build) |
+| [`examples/sleep-timer/`](examples/sleep-timer/) | a complete, tested example app (a patch you can apply to Hop-tunes 1.15.0 and build) |
 | [`scripts/check_app.py`](scripts/check_app.py) | checks an app was added correctly: `python3 scripts/check_app.py <app-id> --repo <Hop-tunes folder>` |
 
 ## Honest status
@@ -57,9 +57,10 @@ repository, which you also give to your agent (an app is added to its source).
   (instructions inside; your agent can do it). **Drop-in apps that need no rebuild are planned, not built**, because an app someone else wrote
   must be sandboxed properly first: see [`docs/DROP-IN-APPS-PLAN.md`](docs/DROP-IN-APPS-PLAN.md).
 * The rules matter more than the code: Hop-tunes promises no required accounts, no telemetry and nothing phoned home. Apps that use the internet
-  must ask first, name the sites they contact, and go through one gateway that can only ask for pages (GET). The one exception is an app's
-  *official* sign-in (OAuth), through three exact requests; see [`docs/NETWORK-AND-PRIVACY.md`](docs/NETWORK-AND-PRIVACY.md).
-* Written against Hop-tunes 1.10.0. If a file path in these docs does not exist in the Hop-tunes you have, the docs are older than your Hop-tunes:
+  must ask first, name the sites they contact, and go through one gateway that can only ask for pages (GET). There is no sign-in in any app. The
+  one narrow exception is a key the person typed in themselves, sent to one host (the game shelf's optional SteamGridDB cover picker); see
+  [`docs/NETWORK-AND-PRIVACY.md`](docs/NETWORK-AND-PRIVACY.md).
+* Written against Hop-tunes 1.15.0 (the apps tab became a grid of glass tiles in 1.13.0, and the person can drag the tiles and file them in folders since 1.14.0). If a file path in these docs does not exist in the Hop-tunes you have, the docs are older than your Hop-tunes:
   tell your agent to read the Hop-tunes source and trust that over these docs.
 
 ## Licence

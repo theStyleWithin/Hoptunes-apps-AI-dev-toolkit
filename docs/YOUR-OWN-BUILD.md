@@ -7,18 +7,25 @@ the whole idea: you do not have to wait for anyone, and nobody has to approve an
 ## What to do
 
 1. **Fork Hop-tunes** on GitHub (the Fork button on `theStyleWithin/Hop-tunes`) and clone *your fork*, not the official repository.
-2. **Fork this toolkit too** and give your agent your fork (or its link). The toolkit needs no more development: the agent only reads it and never changes it.
+2. **Fork this toolkit too** and give your agent your fork (or its link). The toolkit is kept in step with Hop-tunes by its author: the agent only reads it and never changes it.
 3. Give your agent your fork and the toolkit and say what app you want (`PROMPTS.md`). It works on a branch in **your fork**.
 4. **Build your own version**, which is how the app reaches you:
    * **From source** on your computer: `docs/TESTING.md` has the commands; then run `./build/hop-tunes`.
    * **As an AppImage (Linux) or a Windows installer / portable exe**: these are built by the GitHub Actions workflows that are already in
      the repository (`.github/workflows/appimage.yml`, `windows.yml`). In *your fork*, turn Actions on, push your branch (pull requests inside
      your fork produce test builds) or push a version tag. A tag must match the version in `CMakeLists.txt`; read `docs/RELEASING.md` in the
-     Hop-tunes repository, set your own version number (for example 1.10.0 plus a letter or an extra digit in your fork) and tag that. The
+     Hop-tunes repository, set your own version number (for example 1.15.0 plus a letter or an extra digit in your fork) and tag that. The
      built files appear on *your fork's* releases page. The official AppImage and Windows downloads cannot be changed: you run your own.
 5. **Staying up to date** with official Hop-tunes is optional: your agent can merge the official repository's `main` into your fork
    (`git remote add upstream https://github.com/theStyleWithin/Hop-tunes`). The files every app touches (`AppsView.qml`, `AppHost.qml`,
-   `qml.qrc`, `tests/test_ui.cpp`) can then conflict; the agent resolves them and re-runs the whole test suite.
+   `qml.qrc`, `tests/test_ui.cpp`, and for a networked app also `AppNet.cpp`, `App.cpp`, `SettingsView.qml`) can then conflict; the agent resolves them and re-runs the whole test suite.
+
+## On an Android phone
+
+The Android app is built from the same source (`docs/android.md` in the Hop-tunes repository: Android SDK, NDK, Qt for Android, and TagLib and
+SQLite built for Android). An Android build needs a signing key: sign your own build with your own key (an APK signed with a different key than
+the one already installed cannot be installed over it, so uninstall the old one first, which also removes its data). Your fork's Actions do not
+build Android, so this is a local job. Your app appears in the phone's apps grid like any other.
 
 ## What an agent must not do
 

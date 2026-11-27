@@ -8,7 +8,7 @@ source. The app stays in your fork and your own build: `docs/YOUR-OWN-BUILD.md`.
 
 Or, in your own words:
 
-> I love using Hop-tunes, but it only has one app and I want <something else>. Use the toolkit. I do not need anyone's permission to make an
+> I love using Hop-tunes, but the apps it has are not what I need and I want <something else>. Use the toolkit. I do not need anyone's permission to make an
 > app, so do not ask for it, and do not credit the Hop-tunes author with my work.
 
 Good things to tell it:

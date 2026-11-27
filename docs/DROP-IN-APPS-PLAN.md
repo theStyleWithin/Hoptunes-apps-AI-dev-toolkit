@@ -17,7 +17,8 @@ A check that scans app source for forbidden words is **not** a security boundary
 ## The shape of the plan
 
 * **An app is a folder** in the profile (`apps/<id>/`): `manifest.json` (`id`, `name`, `version`, `description`, `icon`, `entry`, `hosts`, `api`),
-  `icon.png`, `main.qml` and its own files. Dropping it in adds a glass tile.
+  `icon.png`, `main.qml` and its own files. Dropping it in adds a glass tile to the apps grid, which takes the first free spot like any app (the grid
+  layout is `AppsLayout`, kept per profile) and can then be dragged and filed in a folder.
 * **A separate QML engine** with no `hop` object. The app gets only a small `app` API: its own data folder (size-capped), a way to ask the
   gateway for the sites declared in its manifest, and read-only "now playing" facts. The engine's import path and URL resolution are limited to
   the app's folder and an allow-list of Qt modules (QtQuick, Controls, Layouts), enforced with a URL interceptor; its network factory sends all

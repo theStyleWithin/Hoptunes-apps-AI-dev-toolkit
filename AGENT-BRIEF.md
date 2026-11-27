@@ -24,21 +24,25 @@ by their fork's Actions) is in `docs/YOUR-OWN-BUILD.md`.
 
 ## What Hop-tunes is
 
-Hop-tunes is a local-first music player for Linux and Windows (and a phone app) inspired by the Zune software: C++20, Qt 6 (QML), CMake +
+Hop-tunes is a local-first music player for Linux and Windows (and an Android app) inspired by the Zune software: C++20, Qt 6 (QML), CMake +
 Ninja, GStreamer/libmpv, TagLib, SQLite. Licence: GPL-3.0-or-later. Its promises, which you must never break:
 **no accounts required, no telemetry, nothing phoned home, works fully offline.** Source: https://github.com/theStyleWithin/Hop-tunes
 
 ## What an "app" is (today)
 
 An app is a small screen that is part of Hop-tunes and opens inside its window from the **apps** tab (a tab that is off until the person
-switches it on in settings). Each app is a glass tile. **Today apps are built into Hop-tunes**: adding one means adding a QML file plus a few
-lines to the Hop-tunes source and building Hop-tunes. Drop-in apps that need no rebuild are *planned, not built*: see
-`docs/DROP-IN-APPS-PLAN.md`. Never tell the person an app can be installed without rebuilding; it cannot yet.
+switches it on in settings). The apps tab is a **grid of glass tiles** (five across on a computer, three on a phone) that the person can drag
+anywhere, file in folders they name and colour, and that Hop-tunes remembers; **a new app takes the first free spot by itself**, so you never
+touch the grid code. **Today apps are built into Hop-tunes**: adding one means adding a QML file plus a few lines to the Hop-tunes source and
+building Hop-tunes. Drop-in apps that need no rebuild are *planned, not built*: see `docs/DROP-IN-APPS-PLAN.md`. Never tell the person an app can be
+installed without rebuilding; it cannot yet.
 
-One real app lives in Hop-tunes today: **Kick** (a networked app: browse and watch live streams, download and record them, playlists,
-an optional official sign-in). In this toolkit, `examples/sleep-timer/` is a tiny app with no network, verified to build and pass the tests.
-Apps can be much more than Kick: timers, lyrics and stats screens, visualizers, radio or podcast helpers, small games, anything that fits a
-screen inside a local-first player. Apps that use the internet must follow `docs/NETWORK-AND-PRIVACY.md`.
+Four real apps live in Hop-tunes today: **Kick** (a networked app: browse and watch live streams, download and record them, playlists, a pretend
+chat), the **Internet Archive** (find and play music, films and books), **DeviantArt** (browse artwork from public feeds) and **neko cafe** (an
+offline game). In this toolkit, `examples/sleep-timer/` is a tiny app with no network, verified to build and pass the tests against Hop-tunes 1.15.0.
+Apps can be much more than these: timers, lyrics and stats screens, visualizers, radio or podcast helpers, small games, anything that fits a
+screen inside a local-first player. Apps that use the internet must follow `docs/NETWORK-AND-PRIVACY.md`. (The game shelf in the collection,
+with its optional SteamGridDB cover picker, is a collection tab, not an app; it is a good second example of an opt-in networked feature.)
 
 ## The rules
 
@@ -48,8 +52,9 @@ screen inside a local-first player. Apps that use the internet must follow `docs
 2. **A networked app asks first.** It needs a permission card that lists the exact sites it contacts and what is sent, an entry in
    settings > apps settings to take the permission back, its sites declared in `AppNet::hostsFor`, and it connects only while it is open.
    Read `docs/NETWORK-AND-PRIVACY.md` before writing any networked app.
-3. **No telemetry, no tracking, no accounts required.** Sign-in to anything outside is optional and never needed for the app to work.
-   Anything the person keeps (a list, a setting) lives in their local profile and is never uploaded. Guests keep nothing.
+3. **No telemetry, no tracking, no accounts.** Apps do not sign in to anything outside (there is no sign-in support in the gateway, on purpose).
+   Anything the person keeps (a list, a setting) lives in their local profile and is never uploaded. Guests keep nothing. The only secret an
+   app may ever send is a key the person typed in themselves, to one named host (`docs/NETWORK-AND-PRIVACY.md`, rule 9).
 4. **Honest wording.** Say what the app does and what it contacts, in plain lower-case sentences like the rest of the UI. Pretend things say
    they are pretend. Never claim something works that you could not test.
 5. **Tests are part of the app.** Every app gets a UI test (see `docs/TESTING.md`) and every networked app gets fixture tests with no real
@@ -66,15 +71,19 @@ screen inside a local-first player. Apps that use the internet must follow `docs
 1. Ask the person, in plain words, only what their request has not already answered: what should the app do, what should it look like, does it
    need the internet (which sites), and what should it remember (nothing, or a list in their profile)? Skip every question the request already
    answers.
-2. Read `docs/HOW-APPS-WORK.md` and `docs/ADD-AN-APP.md`, then look at `examples/sleep-timer/` (the smallest complete app).
+2. Read `docs/HOW-APPS-WORK.md` and `docs/ADD-AN-APP.md`, then look at `examples/sleep-timer/` (the smallest complete app) and, if the app is
+   like one of them, at the real app it resembles (the table in `HOW-APPS-WORK.md`).
 3. Make a branch **in the person's fork** (`docs/YOUR-OWN-BUILD.md`). Add the app following `docs/ADD-AN-APP.md`.
 4. Build and test (`docs/TESTING.md`). Run `python3 <toolkit folder>/scripts/check_app.py <app-id> --repo <your fork of Hop-tunes>` and fix every FAIL. It is a help, not a judge: it checks that the
    app is registered and has a test, nothing more, so a clean result does not mean the app works. The whole `ctest` run is the proof.
-5. Take a screenshot with the test harness (`HOPTUNES_UI_SHOTS`, see `docs/TESTING.md`) and show the person what it looks like.
+5. Take a screenshot with the test harness (`HOPTUNES_UI_SHOTS`, see `docs/TESTING.md`) and show the person what it looks like, on a computer
+   and, for an app with its own screen, at phone size (`docs/TESTING.md`, "Checking an app on a phone-sized window").
 6. Read `docs/LESSONS.md` if anything behaves strangely: it lists mistakes that were already made once.
 7. Show the person how to get their own runnable build (`docs/YOUR-OWN-BUILD.md`), and tell them plainly what works and what you could not test.
 
 ## Definition of done
 
-The app opens from its tile, closes with Esc and the back button, does nothing on the network unless it declared and was allowed to, has a UI
-test that passes, passes `scripts/check_app.py`, and the whole `ctest` suite is green (the one known-red CI check named `floor` is not yours).
+The app opens from its tile (which sits in the grid and can be dragged and filed like every other), closes with Esc and the back button, fits a
+phone-sized window, does nothing on the network unless it declared and was allowed to, has a UI test that passes, passes `scripts/check_app.py`, and
+the whole `ctest` suite is green (the one known-red CI check named `floor` is not yours, and a rare hang in a music test is not yours either:
+`docs/TESTING.md`). If you changed shared C++, compile the Android build too, with and without the networked apps.
