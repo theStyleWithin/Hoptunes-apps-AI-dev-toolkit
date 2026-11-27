@@ -4,8 +4,8 @@
 Usage:  python3 check_app.py <app-id> --repo <path to the Hop-tunes source>
 
 It reads source files only (it builds nothing and runs nothing) and prints PASS / FAIL lines. It catches forgotten registrations (registry, host,
-qrc), a missing licence header, an app QML file that obviously reaches for the network, an app whose test never opens its tile or never closes it,
-and audio analysis that is never released. It is a help, not a judge and not a security boundary: a clean result means "registered and has a test",
+qrc, icon), a missing licence header, an app QML file that obviously reaches for the network, an app whose test never opens its tile or never closes it,
+audio analysis that is never released, and (for a networked app) the places in the gateway, App.cpp and settings that must know the app. It is a help, not a judge and not a security boundary: a clean result means "registered and has a test",
 NOT "works". The whole `ctest` run is the proof. It cannot see network use outside the app's own QML file (the real guard is the test
 `onlyTheGatewayTouchesTheNetwork`).
 """
@@ -66,6 +66,12 @@ def main():
     check(re.search(r'blurb:\s*"[^"]{8,}"', body), "registry: the entry has a one-sentence blurb", 'blurb: "what it does in one plain sentence"')
     uses_net = bool(re.search(r"net:\s*true", body))
     check(re.search(r"net:\s*(true|false)", body), "registry: the entry says whether it uses the internet (net: true or false)", "net: false")
+    icon = re.search(r'icon:\s*"qrc:/images/([^"]+)"', body)
+    if icon:
+        check(os.path.exists(os.path.join(root, "src/ui/images", icon.group(1))), "icon: src/ui/images/%s exists" % icon.group(1), "add the PNG (square, 128 to 256 px, transparent background)")
+        check(("images/%s" % icon.group(1)) in qrc, "icon: images/%s is listed in src/ui/qml.qrc" % icon.group(1), '<file alias="images/%s">images/%s</file>' % (icon.group(1), icon.group(1)))
+    elif entry and re.search(r'icon:\s*"[^"]', body):
+        check(False, "icon: the icon must be a qrc:/images/<name>.png address", 'icon: "qrc:/images/app-myapp.png"')
 
     # 2. the host
     names_map = re.search(r'names:\s*\(\{([^}]*)\}\)', host)
@@ -123,14 +129,25 @@ def main():
     if qml_src and "Component.onDestruction" not in qml_src:
         notes.append("the app has no Component.onDestruction: fine unless it starts timers, holds the music paused, or asks for the song analysis")
 
-    # 5. a networked app also declares its sites and has gateway tests
+    # 5. a networked app also declares its sites, is wired into App.cpp and settings, and has gateway tests
     if uses_net:
         net_cpp = read(os.path.join(root, "src/net/AppNet.cpp")) or ""
         net_test = read(os.path.join(root, "tests/test_net.cpp")) or ""
-        check(('"%s"' % app) in net_cpp, "network: AppNet.cpp declares this app's sites (hostsFor)", "docs/NETWORK-AND-PRIVACY.md")
+        app_cpp = read(os.path.join(root, "src/App.cpp")) or ""
+        settings = read(os.path.join(root, "src/ui/qml/SettingsView.qml")) or ""
+        check(re.search(r'hostsFor[^}]*?QLatin1String\("%s"\)' % re.escape(app), net_cpp, re.S) or ('app == QLatin1String("%s")' % app) in net_cpp,
+              "network: AppNet.cpp declares this app's sites (hostsFor)", "docs/NETWORK-AND-PRIVACY.md")
         check(('"%s"' % app) in net_test, "network: tests/test_net.cpp tests this app's gateway rules", "copy the cases for the new app id")
-        card = any(("kickPermission" in (read(os.path.join(root, "src/ui/qml", f)) or "")) for f in os.listdir(os.path.join(root, "src/ui/qml")) if f.endswith(".qml"))
-        check(card, "network: a permission card exists to copy (KickApp.qml)", "")
+        m = re.search(r"void App::setAppNetAllowed\(.*?\n\}", app_cpp, re.S)
+        check(m and ('QLatin1String("%s")' % app) in m.group(0), "network: App::setAppNetAllowed (src/App.cpp) accepts this app id", "add it to the allow-list there and close the app when the permission is taken back")
+        check(re.search(r'm_appNet\.setAllowed\(QStringLiteral\("%s"\)' % re.escape(app), app_cpp),
+              "network: App.cpp gives the gateway this app's permission when a profile opens and takes it away when it closes", 'm_appNet.setAllowed(QStringLiteral("%s"), ...)' % app)
+        check(('hop.setAppNetAllowed("%s"' % app) in settings, "network: settings > apps settings has a row that takes the permission back (SettingsView.qml)", "see archiveNetRow")
+        qml_dir = os.path.join(root, "src/ui/qml")
+        card = any(('setAppNetAllowed("%s", true)' % app) in (read(os.path.join(qml_dir, f)) or "") for f in os.listdir(qml_dir) if f.endswith(".qml"))
+        check(card, "network: a permission card in the app's own QML turns the permission on (setAppNetAllowed(\"%s\", true)); copy ArchiveApp.qml or KickApp.qml" % app, "")
+        if qml_src and "image://" in qml_src:
+            check(("addImageProvider(QStringLiteral(\"%s\")" % app) in app_cpp, "network: the app's pictures use image://%s/ and App::installImageProviders registers it" % app, "")
 
     failed = 0
     for ok, what, hint in results:

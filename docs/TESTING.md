@@ -26,13 +26,21 @@ PNG for every `shot("name")` call in the tests. `HOPTUNES_FIXTURE_DIR` points at
 
 ## Time limits, screenshots and timers
 
-* **ctest stops the `ui` test after 120 seconds** (`CMakeLists.txt`). It normally takes about 85 s, and it can run longer on a slow machine or with
-  `HOPTUNES_UI_SHOTS` set, which then shows up as "ui (Timeout)" and looks like your app broke something. Take screenshots by running
-  `QT_QPA_PLATFORM=offscreen HOPTUNES_UI_SHOTS=/some/dir ./build/test_ui` directly, and run `ctest` without that variable. If ctest still times out,
-  add `--timeout 600` before blaming the app.
+* **ctest stops the `ui` test after 300 seconds** (`CMakeLists.txt`). It normally takes about 100 to 180 seconds (about 100 on CI, more on a
+  slow machine or with `HOPTUNES_UI_SHOTS` set), and a timeout shows up as "ui (Timeout)" and looks like your app broke something. Take screenshots
+  by running `QT_QPA_PLATFORM=offscreen HOPTUNES_UI_SHOTS=/some/dir ./build/test_ui` directly, and run `ctest` without that variable. If ctest still
+  times out, add `--timeout 600` before blaming the app.
 * **A screenshot only exists if your test calls `shot("name")`** (the sleep-timer example does). Add one when the app is showing.
 * **Never wait for real minutes in a test.** Let the test set the app's own remaining/elapsed property to 1 or 2 seconds (the sleep-timer test
-  sets `remaining` to 2). Every second a test waits is added to a suite that is already near the 120 s limit.
+  sets `remaining` to 2). Every second a test waits is added to a suite that already takes minutes.
+
+## Checking an app on a phone-sized window
+
+An app with its own screen must fit a phone. The test harness can make the window phone-sized: `window()->setProperty("forceMobile", true)`, then
+`w->resize(QSize(412, 892))` (and `QSize(320, 640)` for the narrowest), wait for `w->width()`, open your app and call `shot("...")`; set
+`forceMobile` back to `false` and restore the size afterwards. The existing test `phoneScreensFitTheScreen` does this for the main screens and has an
+`overflowing()` helper that lists anything running past the screen edge: copy its pattern for your screen, and look at the picture. A control
+with a fixed width wider than about 230 dp, or a row of controls that cannot wrap, is the usual culprit (use `Flow` or `Layout.fillWidth`).
 
 ## Rules of thumb
 
@@ -42,9 +50,15 @@ PNG for every `shot("name")` call in the tests. `HOPTUNES_FIXTURE_DIR` points at
   size, then `QTRY_`.
 
 * **Run the whole UI suite twice**: timing mistakes show up as one-in-two failures.
-* **Test on both Qt versions if you can**: CI uses the distro's Qt 6.4; many developers have Qt 6.8. Qt 6.4 is stricter about some layout and
-  property cases (see `LESSONS.md`).
+* **Test on both Qt versions if you can**: the CI `linux` job uses the distro's Qt 6.4.2; the AppImage job builds with Qt 6.8 and runs the tests
+  before packaging; many developers have Qt 6.8. Qt 6.4 is stricter about some layout and property cases (see `LESSONS.md`).
+* **Compile the Android build too if your change touches shared C++** (CI does not build it): with the Android SDK, NDK 26 and Qt 6.8 for
+  Android (`docs/android.md` in the Hop-tunes repository), both with and without the networked apps.
+* **A rare hang is known, and it is not yours:** now and then a music test that stops a song (`Player::stop`) hangs inside GStreamer until the
+  300 s limit ("Test function timed out", a stack that ends in `gst_pad_stop_task`). It has passed on every re-run. Re-run the whole suite once; if it
+  keeps hanging in the same place after your change, then look. Running the tests with `< /dev/null` (no terminal input) is a good habit.
 * Put a new UI test **immediately before** `appsTabHoldsGlassTilesAndAppsOpenInsideTheWindow`, next to the other app tests, not at the end of the
-  file: on Qt 6.4 a late-suite crash existed in the grid layout when Now playing was opened after many tests had run.
+  file: on Qt 6.4 a late-suite crash existed in the grid layout when Now playing was opened after many tests had run (the apps grid is
+  paged, so a tile on a later page is not on screen until that page is shown).
 * `test_player` can fail in sandboxes without audio; the CI check named `floor` is known to be red and is not caused by apps.
 * Tests never use the real network. Use a fake transport.

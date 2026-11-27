@@ -1,5 +1,5 @@
 diff --git a/src/ui/qml.qrc b/src/ui/qml.qrc
-index 027e44b..8185cab 100644
+index a17e0d4..df9e880 100644
 --- a/src/ui/qml.qrc
 +++ b/src/ui/qml.qrc
 @@ -12,6 +12,7 @@
@@ -9,42 +9,47 @@ index 027e44b..8185cab 100644
 +    <file>qml/SleepTimerApp.qml</file>
      <file>qml/KickPlayer.qml</file>
      <file>qml/SeekMeter.qml</file>
-     <file alias="images/app-tile.png">images/app-tile.png</file>
+     <file>qml/StreamDock.qml</file>
 diff --git a/src/ui/qml/AppHost.qml b/src/ui/qml/AppHost.qml
-index 22f3ca7..dc9f5ba 100644
+index bf73fa3..bcc6cb2 100644
 --- a/src/ui/qml/AppHost.qml
 +++ b/src/ui/qml/AppHost.qml
-@@ -11,7 +11,7 @@ FocusScope {
-     property string appId: ""
-     readonly property bool active: appId !== ""
+@@ -16,7 +16,7 @@ FocusScope {
+     // where the app wants the stream's picture (the main window's stream dock sits over it); null when the app has none
+     readonly property Item appVideoSlot: active && !!appLoader.item && appLoader.item.videoSlot !== undefined ? appLoader.item.videoSlot : null
      readonly property bool theatre: active && !!appLoader.item && appLoader.item.theatre === true     // the app wants the whole window (a phone turned sideways, watching)
--    readonly property var names: ({ "kick": "kick" })
-+    readonly property var names: ({ "kick": "kick", "sleeptimer": "sleep timer" })
+-    readonly property var names: ({ "kick": "kick", "deviantart": "deviantart", "archive": "internet archive", "nekocafe": "neko cafe" })
++    readonly property var names: ({ "kick": "kick", "deviantart": "deviantart", "archive": "internet archive", "nekocafe": "neko cafe", "sleeptimer": "sleep timer" })
      visible: active
      signal leave()
  
-@@ -71,7 +71,8 @@ FocusScope {
+@@ -76,10 +76,11 @@ FocusScope {
          id: appLoader
          anchors { left: parent.left; right: parent.right; top: root.theatre ? parent.top : bar.bottom; bottom: parent.bottom; margins: root.theatre ? 0 : Theme.pad; topMargin: root.theatre ? 0 : 18 }
          active: root.active
--        sourceComponent: root.appId === "kick" ? kickApp : null
-+        sourceComponent: root.appId === "kick" ? kickApp : (root.appId === "sleeptimer" ? sleepTimerApp : null)
+-        sourceComponent: root.appId === "kick" ? kickApp : root.appId === "deviantart" ? deviantArtApp : root.appId === "archive" ? archiveApp : root.appId === "nekocafe" ? nekoApp : null
++        sourceComponent: root.appId === "kick" ? kickApp : root.appId === "deviantart" ? deviantArtApp : root.appId === "archive" ? archiveApp : root.appId === "nekocafe" ? nekoApp : root.appId === "sleeptimer" ? sleepTimerApp : null
      }
-+    Component { id: sleepTimerApp; SleepTimerApp { } }
      Component { id: kickApp; KickApp { onLeave: { root.appId = ""; root.leave() } } }
+     Component { id: archiveApp; ArchiveApp { onLeave: { root.appId = ""; root.leave() } } }
+     Component { id: deviantArtApp; DeviantArtApp { onLeave: { root.appId = ""; root.leave() } } }
++    Component { id: sleepTimerApp; SleepTimerApp { } }
+     Component { id: nekoApp; NekoCafeApp { onLeave: { root.appId = ""; root.leave() } } }
  }
 diff --git a/src/ui/qml/AppsView.qml b/src/ui/qml/AppsView.qml
-index 8955af3..bd8a8bf 100644
+index 12b2c96..884ec66 100644
 --- a/src/ui/qml/AppsView.qml
 +++ b/src/ui/qml/AppsView.qml
-@@ -13,6 +13,7 @@ Item {
-     // id, the name under the tile, a line for the tooltip, an icon (a url, or "" for the plain glass)
-     // net: the app uses the internet (it says so on its tile, and is left out of builds without networked apps)
-     readonly property var allApps: [
-+        { id: "sleeptimer", name: "sleep timer", blurb: "pause the music after a time you choose", icon: "", net: false },
-         { id: "kick", name: "kick", blurb: "browse and watch live streams from kick.com. uses the internet only while it is open, and only after you allow it", icon: "qrc:/images/app-kick.png", net: true }
+@@ -33,7 +33,8 @@ Item {
+         { id: "kick", name: "kick", blurb: "browse and watch live streams from kick.com. uses the internet only while it is open, and only after you allow it", icon: "qrc:/images/app-kick.png", net: true },
+         { id: "archive", name: "internet archive", blurb: "find music, films and books on archive.org: play the music, watch the videos and read the books right here, with the media preserver normand64's picks first. uses the internet only while it is open, and only after you allow it. not made or endorsed by the internet archive", icon: "qrc:/images/app-archive.png", net: true },
+         { id: "deviantart", name: "deviantart", blurb: "browse artwork from deviantart's public feeds: search, artists, favourites, your own blocked artists and words, and an 18+ switch (off at the start). uses the internet only while it is open, and only after you allow it. not made or endorsed by deviantart", icon: "qrc:/images/app-deviantart.png", net: true },
+-        { id: "nekocafe", name: "neko cafe", blurb: "a little game: run a cafe as a neko maid. take orders, fetch the coffee from the cook and serve the right customer, fast. works offline, nothing is sent anywhere", icon: "qrc:/images/app-neko-cafe.png", net: false }
++        { id: "nekocafe", name: "neko cafe", blurb: "a little game: run a cafe as a neko maid. take orders, fetch the coffee from the cook and serve the right customer, fast. works offline, nothing is sent anywhere", icon: "qrc:/images/app-neko-cafe.png", net: false },
++        { id: "sleeptimer", name: "sleep timer", blurb: "pause the music after a time you choose. works offline, nothing is sent anywhere", icon: "", net: false }
      ]
      readonly property var apps: allApps.filter(function (a) { return !a.net || hop.netAppsBuilt })
+ 
 diff --git a/src/ui/qml/SleepTimerApp.qml b/src/ui/qml/SleepTimerApp.qml
 new file mode 100644
 index 0000000..acf2825
@@ -121,10 +126,10 @@ index 0000000..acf2825
 +    }
 +}
 diff --git a/tests/test_ui.cpp b/tests/test_ui.cpp
-index f85a81e..96ac4df 100644
+index e983735..b07eeec 100644
 --- a/tests/test_ui.cpp
 +++ b/tests/test_ui.cpp
-@@ -2188,6 +2188,35 @@ private slots:
+@@ -2704,6 +2704,35 @@ private slots:
          m_app->setGameSetting(QStringLiteral("game"), QStringLiteral("albumfall"));
      }
  
