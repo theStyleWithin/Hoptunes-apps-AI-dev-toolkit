@@ -22,6 +22,13 @@ person's **fork** of Hop-tunes (if `origin` is the official `theStyleWithin/Hop-
 pull request or issue on it, tag or release from it. How the person gets a runnable build (from source, an AppImage or a Windows exe built
 by their fork's Actions) is in `docs/YOUR-OWN-BUILD.md`.
 
+## How settled this is
+
+The way apps are set up in Hop-tunes (the apps grid, the registry, the host, the gateway) is settled, and this toolkit is essentially complete and
+set in stone: build apps for the person's own fork of Hop-tunes on the code as it is, following these documents. The toolkit changes only if something
+major changes about how apps work in Hop-tunes. If a path or detail here does not match the Hop-tunes you have, the Hop-tunes source wins: tell the
+person, and do not edit the toolkit.
+
 ## What Hop-tunes is
 
 Hop-tunes is a local-first music player for Linux and Windows (and an Android app) inspired by the Zune software: C++20, Qt 6 (QML), CMake +

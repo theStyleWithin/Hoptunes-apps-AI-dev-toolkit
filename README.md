@@ -27,7 +27,7 @@ repository, which you also give to your agent (an app is added to its source).
 ## How to use it
 
 1. **Fork both repositories** on GitHub: **Hop-tunes** (clone **your fork**: `git clone https://github.com/<you>/Hop-tunes`) and **this toolkit**. The toolkit
-   is kept in step with Hop-tunes by its author: your agent only reads it and never changes it. Your app lives in your own fork of Hop-tunes and your own build; it is never added to the official repository
+   is essentially complete and settled (see "Honest status"): your agent only reads it and never changes it. Your app lives in your own fork of Hop-tunes and your own build; it is never added to the official repository
    ([`docs/YOUR-OWN-BUILD.md`](docs/YOUR-OWN-BUILD.md): from source, as an AppImage or a Windows exe built by your fork's Actions).
 2. Give your coding agent (Claude or any other) **your fork of this toolkit** (or its link) and **your fork of the Hop-tunes source**.
 3. Tell it what you want, for example:
@@ -60,6 +60,9 @@ repository, which you also give to your agent (an app is added to its source).
   must ask first, name the sites they contact, and go through one gateway that can only ask for pages (GET). There is no sign-in in any app. The
   one narrow exception is a key the person typed in themselves, sent to one host (the game shelf's optional SteamGridDB cover picker); see
   [`docs/NETWORK-AND-PRIVACY.md`](docs/NETWORK-AND-PRIVACY.md).
+* **This toolkit is essentially complete and set in stone.** The way apps are set up in Hop-tunes (the apps grid, the registry, the host, the gateway) is
+  settled with the polished interface of Hop-tunes 1.15.0, so apps should be built for people's own forks of Hop-tunes on those recent changes. The
+  toolkit is only updated if something **major** changes about how apps work in Hop-tunes; small changes to Hop-tunes do not need a new toolkit.
 * Written against Hop-tunes 1.15.0 (the apps tab became a grid of glass tiles in 1.13.0, and the person can drag the tiles and file them in folders since 1.14.0). If a file path in these docs does not exist in the Hop-tunes you have, the docs are older than your Hop-tunes:
   tell your agent to read the Hop-tunes source and trust that over these docs.
 

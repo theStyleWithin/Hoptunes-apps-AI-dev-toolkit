@@ -7,7 +7,7 @@ the whole idea: you do not have to wait for anyone, and nobody has to approve an
 ## What to do
 
 1. **Fork Hop-tunes** on GitHub (the Fork button on `theStyleWithin/Hop-tunes`) and clone *your fork*, not the official repository.
-2. **Fork this toolkit too** and give your agent your fork (or its link). The toolkit is kept in step with Hop-tunes by its author: the agent only reads it and never changes it.
+2. **Fork this toolkit too** and give your agent your fork (or its link). The toolkit is essentially complete and set in stone (how apps are set up in Hop-tunes is settled): the agent only reads it and never changes it.
 3. Give your agent your fork and the toolkit and say what app you want (`PROMPTS.md`). It works on a branch in **your fork**.
 4. **Build your own version**, which is how the app reaches you:
    * **From source** on your computer: `docs/TESTING.md` has the commands; then run `./build/hop-tunes`.
