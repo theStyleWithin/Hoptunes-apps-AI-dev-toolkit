@@ -9,7 +9,8 @@ The author says it plainly, so an agent does not stop to wonder:
 
 * **Do not ask the author of Hop-tunes for permission to make an app, and do not wait for anyone's approval.** Build it.
 * The author does not need to be told, asked, consulted or kept informed. There is no application process and no review.
-* **Your app is not added to official Hop-tunes.** It lives in your own fork and your own build (`docs/YOUR-OWN-BUILD.md`). Do not open pull
+* **Your app is not added to official Hop-tunes.** It lives in your own repositories (a repository of its own for the app, and your fork of Hop-tunes) and your own build
+  (`docs/YOUR-OWN-BUILD.md`, `docs/APP-REPOSITORY.md`). Do not open pull
   requests or issues about it on the official repository, and do not push there; the author decides what goes into official Hop-tunes and
   the default is that nothing from this process does.
 
@@ -30,7 +31,8 @@ Your agent still asks **you** things (what the app should do, whether it needs t
 
 ## The licence still applies (this is the law, not a request)
 
-* An app you add to Hop-tunes becomes part of Hop-tunes and is under the same licence, **GPL-3.0-or-later**. Keep that SPDX line in every new
+* An app you add to Hop-tunes becomes part of Hop-tunes and is under the same licence, **GPL-3.0-or-later**. That includes the app's own repository: add the licence
+  text as `LICENSE` before you publish it. Keep that SPDX line in every new
   file. You cannot make your version closed-source.
 * If you give the changed program (or the app) to other people, you must also give them the source under the same licence.
 * Licence and copyright notices that are **already in files you did not write must stay in those files**. The GPL requires that, and it is not

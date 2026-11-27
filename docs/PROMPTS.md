@@ -1,15 +1,20 @@
 # What to say to your coding agent
 
-First fork Hop-tunes on GitHub and give the agent this toolkit (the folder, or the link to this repository) and **your fork** of the Hop-tunes
-source. The app stays in your fork and your own build: `docs/YOUR-OWN-BUILD.md`. Then say something like:
+First fork **both** Hop-tunes and this toolkit on GitHub. Keep your toolkit fork handy (you never change it) and give your agent **your toolkit fork** and **your fork of
+Hop-tunes**. The agent builds the app in your own repositories and never in the official source: `docs/YOUR-OWN-BUILD.md`. Then say something like:
 
-> Read AGENT-BRIEF.md in the toolkit, then help me add an app to Hop-tunes. I want an app that <what it does>. It <does / does not> need
-> the internet. Show me what it will look like before you finish, and run the tests.
+> Read AGENT-BRIEF.md in the toolkit, then help me make an app for Hop-tunes. I want an app that <what it does>. It <does / does not> need
+> the internet. Build it in a new repository of its own and put it into my fork of Hop-tunes with the toolkit's script. Show me what it will look like
+> before you finish, and run the tests.
 
-Or, in your own words:
+To work directly on your fork instead, say "add it on a branch of my fork". Or, in your own words:
 
 > I love using Hop-tunes, but the apps it has are not what I need and I want <something else>. Use the toolkit. I do not need anyone's permission to make an
-> app, so do not ask for it, and do not credit the Hop-tunes author with my work.
+> app, so do not ask for it, and do not credit the Hop-tunes author with my work. Only write code in my own repositories.
+
+To change an app you made earlier:
+
+> Here is my toolkit fork, my Hop-tunes fork and my app's repository. Change the app so that <what>, put it into my fork again, and run the whole test suite.
 
 Good things to tell it:
 

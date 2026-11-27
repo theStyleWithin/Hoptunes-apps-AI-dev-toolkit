@@ -4,11 +4,25 @@ The smallest complete app: pick 15, 30, 60 or 90 minutes and the music pauses wh
 
 ![the sleep timer open inside Hop-tunes](sleep-timer-open.png)
 
-* `SleepTimerApp.qml`: the screen.
-* `sleep-timer.patch`: everything needed against Hop-tunes at commit `bb237909adefb05f99e6058bf05f39ec4e261dcf` (Hop-tunes 1.15.0, see `BASE_COMMIT.txt`):
-  the QML file, the three registration edits (`qml.qrc`, `AppsView.qml`, `AppHost.qml`) and a UI test. It applies cleanly and the whole test suite passes with
-  it (all 19 ctest tests, built on Qt 6.4, the version CI uses). The test sits immediately before `appsTabHoldsGlassTilesAndAppsOpenInsideTheWindow` and
-  calls `shot("sleep-timer-open")`; it sets the remaining time to 2 seconds instead of waiting.
+This folder is an **app repository** (`docs/APP-REPOSITORY.md`): the layout an app has in a repository of its own.
+
+* `app.json`: the manifest (id, name, the tile's pop-up line, no network, the QML file, no icon).
+* `qml/SleepTimerApp.qml`: the screen.
+* `tests/ui_test.inc`: its UI test (the injector places it immediately before `appsTabHoldsGlassTilesAndAppsOpenInsideTheWindow`; it sets the remaining time to
+  2 seconds instead of waiting, and calls `shot("sleep-timer-open")`).
+* `sleep-timer.patch`: the same app as one patch against Hop-tunes at commit `bb237909adefb05f99e6058bf05f39ec4e261dcf` (Hop-tunes 1.15.0, `BASE_COMMIT.txt`), for
+  the **direct way** (`docs/ADD-AN-APP.md`). It applies cleanly and the whole test suite passes with it (all 19 ctest tests, built on Qt 6.4, the version CI
+  uses). The injector produces the same result (checked: the two forks differ only in the marker comments around the test and in where one `Component` line sits).
+
+Put it into **your fork** of Hop-tunes (never the official repository: the script refuses it):
+
+```sh
+python3 /path/to/toolkit/scripts/inject_app.py /path/to/toolkit/examples/sleep-timer --fork /path/to/your/Hop-tunes-fork --dry-run    # what it would change
+python3 /path/to/toolkit/scripts/inject_app.py /path/to/toolkit/examples/sleep-timer --fork /path/to/your/Hop-tunes-fork
+cd /path/to/your/Hop-tunes-fork && cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build build
+QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
+./build/hop-tunes     # settings > apps settings > show the apps tab, then open "sleep timer"
+```
 
 What the registration does in the new apps grid (`docs/HOW-APPS-WORK.md`):
 
@@ -19,7 +33,7 @@ What the registration does in the new apps grid (`docs/HOW-APPS-WORK.md`):
 * It has no icon (`icon: ""`), so it shows the plain glass tile with its name under it. A real app adds a square PNG (`ADD-AN-APP.md`).
 * Nothing else is needed for the grid: the person can drag the tile anywhere or put it in a folder, and it is remembered.
 
-Try it:
+The direct way, with the patch:
 
 ```sh
 git clone https://github.com/<you>/Hop-tunes && cd Hop-tunes      # your fork (the example is only for trying it out; it is not added to official Hop-tunes)

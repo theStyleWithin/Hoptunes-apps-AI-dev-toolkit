@@ -1,0 +1,9 @@
+{
+  "id": "sleeptimer",
+  "name": "sleep timer",
+  "blurb": "pause the music after a time you choose. works offline, nothing is sent anywhere",
+  "net": false,
+  "qml": "SleepTimerApp.qml",
+  "icon": "",
+  "leaves": false
+}

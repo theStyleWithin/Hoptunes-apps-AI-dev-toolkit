@@ -1,4 +1,8 @@
-# Adding an app, step by step
+# Adding an app directly to your fork, step by step
+
+This is the manual way: the edits are made by hand on a branch of **your fork of Hop-tunes** (never the official repository). The recommended way keeps the app in a
+repository of its own and does steps 3 and 4's edits for you with `scripts/inject_app.py` (`APP-REPOSITORY.md`); read these steps anyway, because they say what the
+script does and why.
 
 The complete, tested example is in `examples/sleep-timer/`. Follow the same five steps. (An app that needs the internet also follows
 `NETWORK-AND-PRIVACY.md`; do those parts first. It is a longer job: it touches `src/net`, `src/apps` and `App.cpp` too.)
